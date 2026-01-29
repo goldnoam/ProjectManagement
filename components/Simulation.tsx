@@ -6,16 +6,40 @@ interface SimulationProps {
   exercise: Exercise;
 }
 
+const INITIAL_TASKS = [
+  { id: 1, title: 'Requirement Doc', status: 'To Do' },
+  { id: 2, title: 'UI Mockups', status: 'In Progress' },
+  { id: 3, title: 'Database Setup', status: 'To Do' },
+];
+
 export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   const [completed, setCompleted] = useState(false);
   const [feedback, setFeedback] = useState('');
 
-  // --- Jira/Trello State ---
-  const [tasks, setTasks] = useState([
-    { id: 1, title: 'Requirement Doc', status: 'To Do' },
-    { id: 2, title: 'UI Mockups', status: 'In Progress' },
-    { id: 3, title: 'Database Setup', status: 'To Do' },
-  ]);
+  // Simulation States
+  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [message, setMessage] = useState('');
+  const [dbStatus, setDbStatus] = useState('Planning');
+  const [priority, setPriority] = useState('Low');
+  const [code, setCode] = useState(JSON.stringify({
+    webhook_url: "https://lark.com/api/v1/...",
+    trigger: "new_document",
+    action: "notify_channel"
+  }, null, 2));
+
+  const resetSimulation = () => {
+    setCompleted(false);
+    setFeedback('');
+    setTasks(INITIAL_TASKS);
+    setMessage('');
+    setDbStatus('Planning');
+    setPriority('Low');
+    setCode(JSON.stringify({
+      webhook_url: "https://lark.com/api/v1/...",
+      trigger: "new_document",
+      action: "notify_channel"
+    }, null, 2));
+  };
 
   const moveTask = (id: number) => {
     setTasks(tasks.map(t => {
@@ -28,8 +52,6 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
     }));
   };
 
-  // --- Slack Message Simulation ---
-  const [message, setMessage] = useState('');
   const handleSlackSend = () => {
     if (message.trim().length > 10) {
       setCompleted(true);
@@ -38,13 +60,6 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
       setFeedback('Try adding more context (at least 10 chars).');
     }
   };
-
-  // --- Lark Config Simulation ---
-  const [code, setCode] = useState(JSON.stringify({
-    webhook_url: "https://lark.com/api/v1/...",
-    trigger: "new_document",
-    action: "notify_channel"
-  }, null, 2));
 
   const checkConfig = () => {
     try {
@@ -60,8 +75,6 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
     }
   };
 
-  // --- Notion DB Simulation ---
-  const [dbStatus, setDbStatus] = useState('Planning');
   const updateNotion = (val: string) => {
     setDbStatus(val);
     if (val === 'Launch') {
@@ -70,8 +83,6 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
     }
   };
 
-  // --- Asana Task Simulation ---
-  const [priority, setPriority] = useState('Low');
   const updateAsana = (val: string) => {
     setPriority(val);
     if (val === 'High') {
@@ -202,7 +213,7 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
         );
 
       default:
-        return <div>Simulation pending...</div>;
+        return <div className="p-4 text-center text-slate-500 italic">Simulation pending...</div>;
     }
   };
 
@@ -218,11 +229,22 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
           </h4>
           <p className="text-xs text-slate-500 mt-1">{exercise.instructions}</p>
         </div>
-        {completed && (
-          <div className="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-in zoom-in duration-300">
-            Completed
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {completed && (
+            <div className="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-in zoom-in duration-300">
+              Completed
+            </div>
+          )}
+          <button 
+            onClick={resetSimulation}
+            className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400"
+            title="Reset Simulation"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {renderContent()}
