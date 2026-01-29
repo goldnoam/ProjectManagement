@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ToolID, ToolModule, SimulationType } from './types';
 
@@ -61,6 +60,100 @@ export const TOOLS_DATA: ToolModule[] = [
     ]
   },
   {
+    id: ToolID.SLACK,
+    title: "Slack Collaboration",
+    description: "Efficient synchronous and asynchronous team communication.",
+    icon: "#️⃣",
+    color: "bg-purple-500",
+    overview: "Slack brings the right people, information, and tools together to get work done. From Fortune 100 companies to corner markets, millions of people around the world use Slack to connect their teams.",
+    features: [
+      "Real-time Messaging",
+      "Third-party Integrations",
+      "Voice & Video Huddles",
+      "Workflow Builder"
+    ],
+    comparison: {
+      pros: ["Industry standard", "Deep ecosystem of apps", "Reliable real-time sync"],
+      cons: ["Can be distracting", "Hard to find old threads", "Expensive"],
+      bestFor: "Real-time communication",
+      pricing: "Free to $12.50/user"
+    },
+    lessons: [
+      {
+        id: "slack-1",
+        title: "Channel Communication",
+        content: "Slack channels are organized spaces for everyone and everything you need to work. In this exercise, practice sending a professional status update to a hypothetical channel.",
+        exercise: {
+          type: SimulationType.SLACK_CHAT,
+          instructions: "Draft and send a professional status update of at least 10 characters."
+        }
+      }
+    ]
+  },
+  {
+    id: ToolID.TWIST,
+    title: "Twist: Async Focus",
+    description: "Learn thread-based communication for deep work.",
+    icon: "🌪️",
+    color: "bg-indigo-400",
+    overview: "Twist is built for teams who believe there’s more to work than keeping up with real-time chat. It prioritizes asynchronous collaboration, keeping conversations organized in threads.",
+    features: [
+      "Threaded Conversations",
+      "Deep Focus Modes",
+      "No Presence Indicators",
+      "Structured Inbox"
+    ],
+    comparison: {
+      pros: ["Less distracting", "Better history lookup", "Lower fatigue"],
+      cons: ["Slow for urgent needs", "Niche user base", "Simple integrations"],
+      bestFor: "Remote & Async teams",
+      pricing: "Free to $8/user"
+    },
+    lessons: [
+      {
+        id: "twist-1",
+        title: "Threaded Discussions",
+        content: "Unlike traditional chat, Twist uses threads to separate topics. This prevents one conversation from drowning out another and allows users to respond when they are ready, not when they are interrupted.",
+        quiz: {
+          question: "What is the primary benefit of threaded messaging in Twist?",
+          options: ["Real-time response tracking", "Reducing notification chaos", "Infinite scrolling", "Automated GIF replies"],
+          correctIndex: 1
+        }
+      }
+    ]
+  },
+  {
+    id: ToolID.LARK,
+    title: "Lark (Feishu) Suite",
+    description: "Master the all-in-one suite for modern enterprise collaboration.",
+    icon: "🦜",
+    color: "bg-sky-500",
+    overview: "Lark combines messaging, calendar, docs, and project management in one seamless platform. It’s designed to be a true 'Work OS' that handles everything from chat to bitable databases.",
+    features: [
+      "Smart Calendars",
+      "Bitable Databases",
+      "Minutes Meeting AI",
+      "Integrated Docs"
+    ],
+    comparison: {
+      pros: ["All-in-one value", "Amazing mobile app", "Powerful translation"],
+      cons: ["Steep UI learning curve", "Notification heavy", "Complex permissioning"],
+      bestFor: "Agile enterprises & Startups",
+      pricing: "Free to $12/user"
+    },
+    lessons: [
+      {
+        id: "lark-1",
+        title: "Bitable Automations",
+        content: "Lark's Bitable is a no-code database similar to Airtable. You can configure webhooks and automated triggers to notify teams when new records are added.",
+        exercise: {
+          type: SimulationType.LARK_CONFIG,
+          instructions: "Configure the automation script to set the action to 'notify_team'."
+        }
+      }
+    ]
+  },
+  {
     id: ToolID.TRELLO,
     title: "Trello Fundamentals",
     description: "Visual task management using the simple card-based Kanban system.",
@@ -92,37 +185,6 @@ export const TOOLS_DATA: ToolModule[] = [
     ]
   },
   {
-    id: ToolID.ASANA,
-    title: "Asana Advanced",
-    description: "Manage complex workflows, timelines, and team dependencies.",
-    icon: "🔴",
-    color: "bg-rose-500",
-    overview: "Asana helps teams orchestrate their work, from daily tasks to strategic initiatives. It excels at showing 'who is doing what by when'.",
-    features: [
-      "Timeline View (Gantt)",
-      "Task Dependencies",
-      "Portfolios",
-      "Workload Management"
-    ],
-    comparison: {
-      pros: ["Beautiful UI", "Strong timeline/Gantt tools", "Flexible views"],
-      cons: ["Expensive for small teams", "Limited free tier", "Too many features for simple tasks"],
-      bestFor: "Marketing & Ops teams",
-      pricing: "Free to $25+/user"
-    },
-    lessons: [
-      {
-        id: "asana-1",
-        title: "Task Dependencies",
-        content: "In complex projects, one task often depends on another. Asana allows you to mark a task as 'Waiting on' another, preventing bottlenecks before they happen.",
-        exercise: {
-          type: SimulationType.ASANA_TASK,
-          instructions: "Assign a high priority to the pending task."
-        }
-      }
-    ]
-  },
-  {
     id: ToolID.NOTION,
     title: "Notion for Teams",
     description: "Combine docs, databases, and project management in one place.",
@@ -149,69 +211,6 @@ export const TOOLS_DATA: ToolModule[] = [
         exercise: {
           type: SimulationType.NOTION_DB,
           instructions: "Update the status property of the database record to 'Launch'."
-        }
-      }
-    ]
-  },
-  {
-    id: ToolID.MONDAY,
-    title: "Monday.com Work OS",
-    description: "Highly customizable platform for building your own work operating system.",
-    icon: "📅",
-    color: "bg-indigo-600",
-    overview: "Monday.com is a Work OS that powers teams to run processes, projects, and everyday work their way. It's known for its vibrant UI and powerful automation engine.",
-    features: [
-      "Vibrant Dashboards",
-      "No-Code Automations",
-      "Multiple View Types",
-      "Resource Management"
-    ],
-    comparison: {
-      pros: ["Vibrant, intuitive UI", "Powerful automations", "Highly customizable"],
-      cons: ["Complexity hidden behind UI", "Pricing tiers are strict", "Heavy mobile app"],
-      bestFor: "General project management & CRM",
-      pricing: "$8 to $16/user (min 3)"
-    },
-    lessons: [
-      {
-        id: "monday-1",
-        title: "Building Automations",
-        content: "Monday.com allows you to say: 'When Status changes to Done, notify Team Lead'. This reduces manual coordination significantly.",
-        quiz: {
-          question: "What is a major benefit of the Monday.com 'Work OS' approach?",
-          options: ["Strict adherence to Waterfall", "Extreme customization of workflows", "Lower cost than pencil and paper", "Built-in hardware support"],
-          correctIndex: 1
-        }
-      }
-    ]
-  },
-  {
-    id: ToolID.SLACK,
-    title: "Slack Collaboration",
-    description: "Efficient synchronous and asynchronous team communication.",
-    icon: "#️⃣",
-    color: "bg-purple-500",
-    overview: "Slack brings the right people, information, and tools together to get work done. From Fortune 100 companies to corner markets, millions of people around the world use Slack to connect their teams.",
-    features: [
-      "Real-time Messaging",
-      "Third-party Integrations",
-      "Voice & Video Huddles",
-      "Workflow Builder"
-    ],
-    comparison: {
-      pros: ["Industry standard", "Deep ecosystem of apps", "Reliable real-time sync"],
-      cons: ["Can be distracting", "Hard to find old threads", "Expensive"],
-      bestFor: "Real-time communication",
-      pricing: "Free to $12.50/user"
-    },
-    lessons: [
-      {
-        id: "slack-1",
-        title: "Channel Communication",
-        content: "Slack channels are organized spaces for everyone and everything you need to work. In this exercise, practice sending a professional status update to a hypothetical channel.",
-        exercise: {
-          type: SimulationType.SLACK_CHAT,
-          instructions: "Draft and send a professional status update of at least 10 characters."
         }
       }
     ]

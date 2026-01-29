@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SimulationType, Exercise } from '../types';
 
@@ -14,6 +13,8 @@ const INITIAL_TASKS = [
 
 export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   const [completed, setCompleted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [showWASD, setShowWASD] = useState(false);
   const [feedback, setFeedback] = useState('');
 
   // Simulation States
@@ -34,6 +35,7 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
     setMessage('');
     setDbStatus('Planning');
     setPriority('Low');
+    setIsPaused(false);
     setCode(JSON.stringify({
       webhook_url: "https://lark.com/api/v1/...",
       trigger: "new_document",
@@ -42,6 +44,7 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   };
 
   const moveTask = (id: number) => {
+    if (isPaused) return;
     setTasks(tasks.map(t => {
       if (t.id === id) {
         const nextStatus = t.status === 'To Do' ? 'In Progress' : 'Done';
@@ -53,6 +56,7 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   };
 
   const handleSlackSend = () => {
+    if (isPaused) return;
     if (message.trim().length > 10) {
       setCompleted(true);
       setFeedback('Great job! Your message is clear and professional.');
@@ -62,9 +66,10 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   };
 
   const checkConfig = () => {
+    if (isPaused) return;
     try {
       const parsed = JSON.parse(code);
-      if (parsed.trigger && (parsed.action === 'notify_team' || parsed.action === 'notify_everyone')) {
+      if (parsed.trigger && (parsed.action === 'notify_team')) {
         setCompleted(true);
         setFeedback('Perfect! Automation configured correctly.');
       } else {
@@ -76,6 +81,7 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   };
 
   const updateNotion = (val: string) => {
+    if (isPaused) return;
     setDbStatus(val);
     if (val === 'Launch') {
       setCompleted(true);
@@ -84,6 +90,7 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   };
 
   const updateAsana = (val: string) => {
+    if (isPaused) return;
     setPriority(val);
     if (val === 'High') {
       setCompleted(true);
@@ -92,6 +99,16 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   };
 
   const renderContent = () => {
+    if (isPaused) {
+      return (
+        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/50">
+          <span className="text-4xl mb-4">⏸️</span>
+          <p className="font-bold text-slate-500 uppercase tracking-widest text-sm">Simulation Paused</p>
+          <button onClick={() => setIsPaused(false)} className="mt-4 px-6 py-2 bg-primary-600 text-white rounded-lg text-xs font-bold hover:bg-primary-700 transition-all">Resume Learning</button>
+        </div>
+      );
+    }
+
     switch (exercise.type) {
       case SimulationType.JIRA_BOARD:
       case SimulationType.TRELLO_LIST:
@@ -218,7 +235,19 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   };
 
   return (
-    <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-primary-100 dark:border-primary-900/30 shadow-inner">
+    <div className="relative p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-primary-100 dark:border-primary-900/30 shadow-inner overflow-hidden">
+      {showWASD && !isPaused && (
+        <div className="absolute bottom-4 right-4 z-20 flex flex-col items-center gap-1 opacity-50 pointer-events-none scale-75">
+          <div className="w-8 h-8 border-2 border-slate-400 rounded flex items-center justify-center font-bold text-slate-400">W</div>
+          <div className="flex gap-1">
+            <div className="w-8 h-8 border-2 border-slate-400 rounded flex items-center justify-center font-bold text-slate-400">A</div>
+            <div className="w-8 h-8 border-2 border-slate-400 rounded flex items-center justify-center font-bold text-slate-400">S</div>
+            <div className="w-8 h-8 border-2 border-slate-400 rounded flex items-center justify-center font-bold text-slate-400">D</div>
+          </div>
+          <span className="text-[8px] font-bold text-slate-400 mt-1 uppercase">Mobile Controls Active</span>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h4 className="font-bold text-primary-600 dark:text-primary-400 flex items-center gap-2">
@@ -235,6 +264,34 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
               Completed
             </div>
           )}
+          
+          <button 
+            onClick={() => setIsPaused(!isPaused)}
+            className={`p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${isPaused ? 'text-primary-500' : 'text-slate-500 dark:text-slate-400'}`}
+            title={isPaused ? "Resume" : "Pause"}
+          >
+            {isPaused ? (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+          </button>
+
+          <button 
+            onClick={() => setShowWASD(!showWASD)}
+            className={`p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${showWASD ? 'text-primary-500' : 'text-slate-500 dark:text-slate-400'}`}
+            title="Mobile Controls (WASD)"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </button>
+
           <button 
             onClick={resetSimulation}
             className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400"
@@ -249,7 +306,7 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
 
       {renderContent()}
 
-      {feedback && (
+      {feedback && !isPaused && (
         <div className={`mt-4 p-3 rounded-lg text-xs font-medium animate-in slide-in-from-left-2 duration-300 ${completed ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'}`}>
           {feedback}
         </div>
