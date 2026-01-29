@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const Footer: React.FC = () => {
@@ -12,7 +11,6 @@ export const Footer: React.FC = () => {
         <div className="flex gap-6 text-sm text-slate-500 dark:text-slate-400">
           <a href="#" className="hover:text-primary-500 transition-colors">Terms of Service</a>
           <a href="#" className="hover:text-primary-500 transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-primary-500 transition-colors">Ad Choices</a>
         </div>
 
         <div className="flex items-center gap-2">
