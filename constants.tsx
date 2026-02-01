@@ -1,4 +1,3 @@
-
 import { ToolID, ToolModule, SimulationType } from './types';
 
 export const TRANSLATIONS: Record<string, Record<string, string>> = {
@@ -50,8 +49,7 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     size_medium: "中",
     size_large: "大",
   },
-  // Simplified for other languages to keep XML size manageable
-  hi: { title: "पीएम मास्टरी", search: "खोजें...", bookmarks: "बुकमार्क", lessons: "पाठ", feedback: "प्रतिक्रिया भेजें" },
+  hi: { title: "पीएम माסטरी", search: "खोजें...", bookmarks: "बुकमार्क", lessons: "पाठ", feedback: "प्रतिक्रिया भेजें" },
   de: { title: "PM Meisterschaft", search: "Suche...", bookmarks: "Lesezeichen", lessons: "Lektionen", feedback: "Feedback senden" },
   es: { title: "Maestría PM", search: "Buscar...", bookmarks: "Marcadores", lessons: "Lecciones", feedback: "Enviar comentarios" },
   fr: { title: "Maîtrise PM", search: "Rechercher...", bookmarks: "Signets", lessons: "Leçons", feedback: "Envoyer des commentaires" },
@@ -127,6 +125,59 @@ export const TOOLS_DATA: ToolModule[] = [
         exercise: {
           type: SimulationType.SLACK_CHAT,
           instructions: "Send a status update in the simulated channel to finish."
+        }
+      }
+    ]
+  },
+  {
+    id: ToolID.TWIST,
+    title: "Twist Communication",
+    description: "Asynchronous communication for more focused work.",
+    icon: "🌀",
+    color: "bg-indigo-600",
+    overview: "Twist is built for teams that prioritize focused work over real-time chatter.",
+    features: ["Threaded conversations", "No presence indicators", "Deep work focus"],
+    comparison: {
+      pros: ["Reduces stress", "Information is easy to find", "Better for async teams"],
+      cons: ["Not for urgent chat", "Smaller ecosystem than Slack"],
+      bestFor: "Remote teams working across time zones",
+      pricing: "Free to $8/user"
+    },
+    lessons: [
+      {
+        id: "twist-1",
+        title: "The Power of Threads",
+        content: "Threads keep conversations organized. Unlike Slack where things get buried, Twist ensures every topic has its place.",
+        quiz: {
+          question: "Why does Twist avoid 'green dots' (presence indicators)?",
+          options: ["To save battery", "To reduce the pressure to respond immediately", "Because it is technically difficult", "To keep users offline"],
+          correctIndex: 1
+        }
+      }
+    ]
+  },
+  {
+    id: ToolID.LARK,
+    title: "Lark Suite",
+    description: "The all-in-one workspace for modern collaboration.",
+    icon: "🕊️",
+    color: "bg-cyan-500",
+    overview: "Lark combines chat, calendar, documents, and meetings in a single unified app.",
+    features: ["Built-in Document editing", "Auto-translation", "Integrated approval flows"],
+    comparison: {
+      pros: ["Feature-rich all-in-one", "Excellent free tier", "Smooth integration"],
+      cons: ["UI can feel cluttered", "Less flexible than best-of-breed"],
+      bestFor: "Global teams looking for a single tool solution",
+      pricing: "Free to $12/user"
+    },
+    lessons: [
+      {
+        id: "lark-1",
+        title: "Automated Workflows",
+        content: "Lark allows you to trigger approvals and notifications directly from within your documents and chat.",
+        exercise: {
+          type: SimulationType.LARK_CONFIG,
+          instructions: "Update the configuration to notify the team when a document is shared."
         }
       }
     ]
