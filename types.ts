@@ -21,6 +21,10 @@ export enum SimulationType {
   ASANA_TASK = 'asana-task'
 }
 
+export type AppTheme = 'dark' | 'bright' | 'colorful';
+export type AppLanguage = 'en' | 'he' | 'zh' | 'hi' | 'de' | 'es' | 'fr';
+export type AppFontSize = 'small' | 'medium' | 'large';
+
 export interface Exercise {
   type: SimulationType;
   instructions: string;
@@ -43,7 +47,7 @@ export interface ToolModule {
   overview: string;
   features: string[];
   lessons: Lesson[];
-  comparison?: ComparisonInfo; // Added for comparison view
+  comparison?: ComparisonInfo;
 }
 
 export interface Lesson {

@@ -7,10 +7,31 @@
   body {
     @apply antialiased text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 transition-colors duration-300;
   }
+
+  /* Font Scale System */
+  html.text-small { font-size: 14px; }
+  html.text-medium { font-size: 16px; }
+  html.text-large { font-size: 20px; }
 }
 
 @layer components {
-  .glass {
-    @apply bg-white/5 backdrop-blur-md dark:bg-black/20;
+  .colorful {
+    --primary: #f43f5e; /* rose-500 */
+    --bg-main: #fffbeb; /* amber-50 */
+    --bg-dark: #312e81; /* indigo-900 */
+  }
+
+  .colorful body {
+    background-color: theme('colors.indigo.900');
+  }
+
+  .colorful h1, .colorful h2 {
+    background: linear-gradient(to right, #f43f5e, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .rtl-support {
+    text-align: right;
   }
 }

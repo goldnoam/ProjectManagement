@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SimulationType, Exercise } from '../types';
 
 interface SimulationProps {
@@ -14,7 +14,7 @@ const INITIAL_TASKS = [
 export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
   const [completed, setCompleted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [showWASD, setShowWASD] = useState(false);
+  const [showControls, setShowControls] = useState(false);
   const [feedback, setFeedback] = useState('');
 
   // Simulation States
@@ -80,31 +80,18 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
     }
   };
 
-  const updateNotion = (val: string) => {
-    if (isPaused) return;
-    setDbStatus(val);
-    if (val === 'Launch') {
-      setCompleted(true);
-      setFeedback('Database updated! Notion view will now sync across devices.');
-    }
-  };
-
-  const updateAsana = (val: string) => {
-    if (isPaused) return;
-    setPriority(val);
-    if (val === 'High') {
-      setCompleted(true);
-      setFeedback('Priority escalated! The team will see this in their "Inbox".');
-    }
-  };
-
   const renderContent = () => {
     if (isPaused) {
       return (
-        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/50 dark:bg-slate-900/50">
-          <span className="text-4xl mb-4">⏸️</span>
+        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-slate-100/50 dark:bg-slate-900/50 backdrop-blur-sm">
+          <span className="text-4xl mb-4 animate-pulse">⏸️</span>
           <p className="font-bold text-slate-500 uppercase tracking-widest text-sm">Simulation Paused</p>
-          <button onClick={() => setIsPaused(false)} className="mt-4 px-6 py-2 bg-primary-600 text-white rounded-lg text-xs font-bold hover:bg-primary-700 transition-all">Resume Learning</button>
+          <button 
+            onClick={() => setIsPaused(false)} 
+            className="mt-4 px-6 py-2 bg-primary-600 text-white rounded-full text-xs font-bold hover:bg-primary-700 transition-all hover:scale-105 active:scale-95 shadow-lg"
+          >
+            RESUME
+          </button>
         </div>
       );
     }
@@ -113,19 +100,19 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
       case SimulationType.JIRA_BOARD:
       case SimulationType.TRELLO_LIST:
         return (
-          <div className="grid grid-cols-3 gap-4 min-h-[180px]">
+          <div className="grid grid-cols-3 gap-4 min-h-[200px]">
             {['To Do', 'In Progress', 'Done'].map(status => (
-              <div key={status} className="bg-slate-100 dark:bg-slate-800 rounded-lg p-2 border border-slate-200 dark:border-slate-700 flex flex-col">
-                <h5 className="text-[10px] font-bold uppercase text-slate-400 mb-2 px-1">{status}</h5>
+              <div key={status} className="bg-slate-100 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-200 dark:border-slate-700 flex flex-col">
+                <h5 className="text-[9px] font-black uppercase text-slate-400 mb-2 px-1 tracking-tighter">{status}</h5>
                 <div className="flex-1 space-y-2">
                   {tasks.filter(t => t.status === status).map(task => (
                     <button 
                       key={task.id}
                       onClick={() => moveTask(task.id)}
-                      className="w-full text-left p-2 bg-white dark:bg-slate-900 rounded shadow-sm border border-slate-200 dark:border-slate-700 text-[11px] hover:border-primary-500 transition-colors group"
+                      className="w-full text-left p-3 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 text-[11px] font-medium hover:border-primary-500 hover:ring-2 hover:ring-primary-500/20 transition-all group"
                     >
                       {task.title}
-                      <span className="block mt-1 text-[8px] text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">Click to move →</span>
+                      <span className="block mt-1 text-[8px] text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">Click to advance →</span>
                     </button>
                   ))}
                 </div>
@@ -137,20 +124,27 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
       case SimulationType.SLACK_CHAT:
         return (
           <div className="space-y-4">
-            <div className="bg-slate-950 rounded-lg p-4 font-mono text-xs text-slate-300 h-24 overflow-y-auto border border-slate-800">
-              <div className="mb-2"><span className="text-purple-400 font-bold">#project-delta</span></div>
-              {completed && <div className="text-white"><span className="font-bold text-blue-400">You:</span> {message}</div>}
-              {!completed && <div className="text-slate-600 italic">Waiting for input...</div>}
+            <div className="bg-slate-950 rounded-xl p-4 font-mono text-xs text-slate-300 h-24 overflow-y-auto border border-slate-800 shadow-inner">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span className="text-purple-400 font-bold">#general</span>
+              </div>
+              {completed && (
+                <div className="animate-in slide-in-from-left duration-300">
+                  <span className="font-bold text-blue-400">You:</span> {message}
+                </div>
+              )}
+              {!completed && <div className="text-slate-600 italic animate-pulse">Waiting for your message...</div>}
             </div>
             <div className="flex gap-2">
               <input 
                 type="text" 
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Write your update..."
-                className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+                placeholder="Type a message..."
+                className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary-500 outline-none transition-all"
               />
-              <button onClick={handleSlackSend} className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg text-sm font-bold transition-colors">Send</button>
+              <button onClick={handleSlackSend} className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-xl text-sm font-bold transition-all shadow-md active:scale-95">Send</button>
             </div>
           </div>
         );
@@ -158,147 +152,79 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
       case SimulationType.LARK_CONFIG:
         return (
           <div className="space-y-4">
-            <div className="relative">
+            <div className="relative group">
               <textarea 
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="w-full h-40 bg-slate-900 text-primary-400 font-mono text-xs p-4 rounded-lg border border-slate-700 outline-none focus:ring-1 focus:ring-primary-500"
+                className="w-full h-40 bg-slate-900 text-emerald-400 font-mono text-xs p-4 rounded-xl border border-slate-700 outline-none focus:ring-2 focus:ring-primary-500 transition-all"
                 spellCheck={false}
               />
-              <div className="absolute top-2 right-2 text-[10px] bg-slate-800 px-2 py-1 rounded text-slate-500 font-mono">automation.json</div>
+              <div className="absolute top-3 right-3 text-[10px] bg-slate-800 px-2 py-1 rounded-md text-slate-500 font-mono border border-slate-700 group-hover:text-primary-400 transition-colors">config.json</div>
             </div>
-            <button onClick={checkConfig} className="w-full bg-slate-800 hover:bg-slate-700 text-white py-3 rounded-xl text-sm font-bold transition-all">Save & Deploy</button>
-          </div>
-        );
-
-      case SimulationType.NOTION_DB:
-        return (
-          <div className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 uppercase">
-                <tr>
-                  <th className="p-3 font-medium">Name</th>
-                  <th className="p-3 font-medium">Status</th>
-                  <th className="p-3 font-medium">Owner</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                <tr>
-                  <td className="p-3 font-medium">Q4 Roadmap</td>
-                  <td className="p-3">
-                    <select 
-                      value={dbStatus} 
-                      onChange={(e) => updateNotion(e.target.value)}
-                      className="bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded px-2 py-1 outline-none border border-transparent focus:border-primary-500"
-                    >
-                      <option value="Planning">Planning</option>
-                      <option value="In Progress">In Progress</option>
-                      <option value="Launch">Launch</option>
-                    </select>
-                  </td>
-                  <td className="p-3 text-slate-400">@me</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        );
-
-      case SimulationType.ASANA_TASK:
-        return (
-          <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center justify-between mb-4">
-              <h5 className="font-bold text-sm">Review App Security</h5>
-              <div className="flex items-center gap-2">
-                 <span className="text-[10px] text-slate-400">Priority:</span>
-                 <select 
-                  value={priority}
-                  onChange={(e) => updateAsana(e.target.value)}
-                  className="text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-1"
-                 >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                 </select>
-              </div>
-            </div>
-            <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div 
-                className={`h-full transition-all duration-500 ${priority === 'High' ? 'w-full bg-rose-500' : priority === 'Medium' ? 'w-2/3 bg-amber-500' : 'w-1/3 bg-blue-500'}`}
-              ></div>
-            </div>
+            <button onClick={checkConfig} className="w-full bg-slate-800 hover:bg-slate-700 text-white py-3 rounded-xl text-sm font-bold transition-all border border-slate-700 shadow-lg active:scale-95">Verify & Deploy</button>
           </div>
         );
 
       default:
-        return <div className="p-4 text-center text-slate-500 italic">Simulation pending...</div>;
+        return <div className="p-8 text-center text-slate-400 italic bg-slate-50 dark:bg-slate-900/50 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-800">Coming soon...</div>;
     }
   };
 
   return (
-    <div className="relative p-6 rounded-2xl bg-white dark:bg-slate-900 border-2 border-primary-100 dark:border-primary-900/30 shadow-inner overflow-hidden">
-      {showWASD && !isPaused && (
-        <div className="absolute bottom-4 right-4 z-20 flex flex-col items-center gap-1 opacity-50 pointer-events-none scale-75">
-          <div className="w-8 h-8 border-2 border-slate-400 rounded flex items-center justify-center font-bold text-slate-400">W</div>
+    <div className="relative p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 shadow-2xl overflow-hidden group">
+      {/* Game Style WASD Overlay */}
+      {showControls && !isPaused && (
+        <div className="absolute bottom-6 right-6 z-30 flex flex-col items-center gap-1 opacity-60 pointer-events-none scale-90">
+          <div className="w-10 h-10 border-2 border-primary-500/50 rounded-xl flex items-center justify-center font-black text-primary-500/50 bg-primary-500/5">W</div>
           <div className="flex gap-1">
-            <div className="w-8 h-8 border-2 border-slate-400 rounded flex items-center justify-center font-bold text-slate-400">A</div>
-            <div className="w-8 h-8 border-2 border-slate-400 rounded flex items-center justify-center font-bold text-slate-400">S</div>
-            <div className="w-8 h-8 border-2 border-slate-400 rounded flex items-center justify-center font-bold text-slate-400">D</div>
+            <div className="w-10 h-10 border-2 border-primary-500/50 rounded-xl flex items-center justify-center font-black text-primary-500/50 bg-primary-500/5">A</div>
+            <div className="w-10 h-10 border-2 border-primary-500/50 rounded-xl flex items-center justify-center font-black text-primary-500/50 bg-primary-500/5">S</div>
+            <div className="w-10 h-10 border-2 border-primary-500/50 rounded-xl flex items-center justify-center font-black text-primary-500/50 bg-primary-500/5">D</div>
           </div>
-          <span className="text-[8px] font-bold text-slate-400 mt-1 uppercase">Mobile Controls Active</span>
+          <span className="text-[10px] font-black text-primary-500/40 mt-1 uppercase tracking-widest">Mobile Controls</span>
         </div>
       )}
 
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h4 className="font-bold text-primary-600 dark:text-primary-400 flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            Interactive Lab
-          </h4>
-          <p className="text-xs text-slate-500 mt-1">{exercise.instructions}</p>
+      {/* Header Controls */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></div>
+            <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter text-sm">Active Simulation</h4>
+          </div>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{exercise.instructions}</p>
         </div>
-        <div className="flex items-center gap-2">
-          {completed && (
-            <div className="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest animate-in zoom-in duration-300">
-              Completed
-            </div>
-          )}
-          
+        
+        <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-slate-700">
           <button 
             onClick={() => setIsPaused(!isPaused)}
-            className={`p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${isPaused ? 'text-primary-500' : 'text-slate-500 dark:text-slate-400'}`}
+            className={`p-2 rounded-xl transition-all ${isPaused ? 'bg-primary-500 text-white shadow-lg' : 'text-slate-500 hover:bg-white dark:hover:bg-slate-700'}`}
             title={isPaused ? "Resume" : "Pause"}
           >
             {isPaused ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
             )}
           </button>
 
           <button 
-            onClick={() => setShowWASD(!showWASD)}
-            className={`p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${showWASD ? 'text-primary-500' : 'text-slate-500 dark:text-slate-400'}`}
-            title="Mobile Controls (WASD)"
+            onClick={() => setShowControls(!showControls)}
+            className={`p-2 rounded-xl transition-all ${showControls ? 'bg-indigo-500 text-white shadow-lg' : 'text-slate-500 hover:bg-white dark:hover:bg-slate-700'}`}
+            title="Toggle Mobile WASD"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
             </svg>
           </button>
 
           <button 
             onClick={resetSimulation}
-            className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400"
-            title="Reset Simulation"
+            className="p-2 rounded-xl text-slate-500 hover:bg-white dark:hover:bg-slate-700 transition-all"
+            title="Reset"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </button>
         </div>
@@ -307,8 +233,17 @@ export const Simulation: React.FC<SimulationProps> = ({ exercise }) => {
       {renderContent()}
 
       {feedback && !isPaused && (
-        <div className={`mt-4 p-3 rounded-lg text-xs font-medium animate-in slide-in-from-left-2 duration-300 ${completed ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'}`}>
-          {feedback}
+        <div className={`mt-6 p-4 rounded-xl text-xs font-bold animate-in zoom-in duration-300 border-2 ${completed ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400' : 'bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-800 text-amber-600 dark:text-amber-400'}`}>
+          <div className="flex items-center gap-2">
+            <span>{completed ? '🎉' : '⚠️'}</span>
+            {feedback}
+          </div>
+        </div>
+      )}
+
+      {completed && !isPaused && (
+        <div className="absolute top-0 right-0 p-4">
+           <div className="bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg animate-bounce uppercase">Complete!</div>
         </div>
       )}
     </div>

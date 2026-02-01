@@ -1,23 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PM Mastery | Learn Jira, Slack, Lark & Project Management</title>
+    <title>PM Mastery | Learn Jira, Slack, Trello & Agile</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Master modern project management tools. Educational guides and interactive simulations for Jira, Slack, Twist, Lark, Notion, and more.">
-    <meta name="keywords" content="Jira, Slack, Lark, Twist, Project Management, Agile, Scrum, Kanban, SaaS Learning">
+    <meta name="description" content="Ultimate educational platform for mastering Jira, Slack, Trello and Project Management. Multi-language, accessible, and offline-ready.">
+    <meta name="keywords" content="Jira, Slack, Trello, Project Management, Agile, Learning, Education">
     <meta name="author" content="Noam Gold AI">
-    <meta property="og:title" content="PM Mastery: Learn Modern PM Tools">
-    <meta property="og:description" content="Ultimate platform for mastering Jira, Slack, and agile workflows.">
-    <meta property="og:type" content="website">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/32/project.png">
-    
+    <!-- JSON-LD SEO Scheme -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "PM Mastery",
+      "description": "Master modern project management tools.",
+      "url": "https://pmmastery.ai"
+    }
+    </script>
+
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0274741291001288" crossorigin="anonymous"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/32/project.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,16 +38,25 @@
 <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.38.0",
-    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "react": "https://esm.sh/react@^19.2.4",
     "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4"
+    "react-dom": "https://esm.sh/react-dom@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "recharts": "https://esm.sh/recharts@^3.7.0"
   }
 }
 </script>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
     <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
+    <script>
+      // Basic Offline/PWA Service Worker Registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed:', err));
+        });
+      }
+    </script>
 </body>
 </html>

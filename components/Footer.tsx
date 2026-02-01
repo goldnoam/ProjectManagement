@@ -1,6 +1,12 @@
+
 import React from 'react';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  translations: any;
+  speak: (t: string) => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ translations, speak }) => {
   return (
     <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-8 px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -14,7 +20,12 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-slate-400 text-sm">Send Feedback:</span>
+          <button 
+            onClick={() => speak(translations.feedback)}
+            className="text-slate-400 text-sm hover:text-slate-600 transition-colors"
+          >
+            {translations.feedback}:
+          </button>
           <a 
             href="mailto:goldnoamai@gmail.com" 
             className="text-primary-600 dark:text-primary-400 font-bold hover:underline transition-all"
