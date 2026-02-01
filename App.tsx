@@ -116,7 +116,11 @@ const App: React.FC = () => {
     a.click();
   };
 
-  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  };
+  
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const data = e.dataTransfer.getData('text');
@@ -162,6 +166,7 @@ const App: React.FC = () => {
             <div className="relative group">
               <input 
                 type="text"
+                autoComplete="off"
                 placeholder={t.search}
                 className="w-full p-4 pr-32 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm focus:ring-2 focus:ring-primary-500 outline-none transition-all"
                 value={searchQuery}
