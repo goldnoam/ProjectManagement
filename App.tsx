@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { ToolID, ToolModule, Lesson, AppTheme, AppLanguage, AppFontSize } from './types';
 import { TOOLS_DATA, TRANSLATIONS } from './constants';
@@ -21,6 +20,7 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<AppLanguage>(() => (localStorage.getItem('pm_lang') as AppLanguage) || 'en');
   const [fontSize, setFontSize] = useState<AppFontSize>(() => (localStorage.getItem('pm_font_size') as AppFontSize) || 'medium');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(() => {
     const saved = localStorage.getItem('pm_mastery_bookmarks');
     return saved ? JSON.parse(saved) : [];
@@ -30,15 +30,31 @@ const App: React.FC = () => {
   const isRTL = language === 'he';
 
   useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem('pm_mastery_bookmarks', JSON.stringify(bookmarks));
   }, [bookmarks]);
 
   useEffect(() => {
     localStorage.setItem('pm_theme', theme);
-    document.documentElement.classList.remove('dark', 'bright', 'colorful');
-    document.documentElement.classList.add(theme === 'bright' ? 'light' : theme);
-    if (theme === 'dark' || theme === 'colorful') {
+    document.documentElement.classList.remove('dark', 'bright', 'colorful', 'light');
+    
+    if (theme === 'bright') {
+      document.documentElement.classList.add('light');
+    } else {
       document.documentElement.classList.add('dark');
+      if (theme === 'colorful') document.documentElement.classList.add('colorful');
     }
   }, [theme]);
 
@@ -118,6 +134,7 @@ const App: React.FC = () => {
         setFontSize={setFontSize}
         translations={t}
         speak={speak}
+        isOnline={isOnline}
       />
 
       <div className="flex-1 flex overflow-hidden">
