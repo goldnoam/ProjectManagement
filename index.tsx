@@ -14,3 +14,14 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+// Register Service Worker using a standard relative path
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // Using '/sw.js' ensures it's fetched from the root of the domain
+    // If the app is in a subdirectory, adjust accordingly or use a relative path like './sw.js'
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW registered successfully with scope:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
